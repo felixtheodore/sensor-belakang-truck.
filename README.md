@@ -1,6 +1,6 @@
 # Sensor Belakang Truk
 
-Alat pendeteksi kendaraan di belakang truk menggunakan sensor ultrasonic HC-SR04.
+Alat pendeteksi kendaraan di belakang truk menggunakan sensor 
 
 ## 📌 Deskripsi
 
@@ -25,12 +25,12 @@ risiko kecelakaan saat truk mundur.
 **Bagi Sopir Truk**
 - Mengetahui keberadaan kendaraan di belakang.
 - Mendapat peringatan saat akan mundur.
-- Mengurangi risiko kecelakaan.
-
+- Mengurangi risiko kecelakaan lalulintas.
+  
 **Bagi Pengguna Jalan Lain**
 - Lebih aman berada di sekitar truk.
 - Mengurangi risiko tertabrak saat truk mundur.
-
+- membantu pengendara lebih waspada saat berkendara.
 ## ⚙️ Komponen
 
 | Komponen | Jumlah |
@@ -99,6 +99,6 @@ Status: 🚧 Dalam Pengembangan
 
 ## 👤 Author
 
-**Nama:** [Nama Lo]  
-**NIM:** [NIM Lo]  
-**Mata Kuliah:** [Nama Mata Kuliah]
+**Nama:** [Felix Theodore]  
+**NIM:** [2510101010]  
+**Mata Kuliah:** [Rekayasa perangkat lunak]
