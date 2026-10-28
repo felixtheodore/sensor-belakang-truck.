@@ -1,14 +1,14 @@
-def evaluate_distance(distance_cm: float) -> str:
-    if not isinstance(distance_cm, (int, float)):
-        raise ValueError("Input jarak harus berupa angka")
-    if distance_cm < 0:
-        raise ValueError("Jarak tidak boleh bernilai negatif")
-        
-    if distance_cm > 500:
+def evaluate_distance(distance, danger_threshold=100):
+    if not isinstance(distance, (int, float)):
+        raise ValueError("Jarak harus berupa angka")
+    if distance < 0:
+        raise ValueError("Jarak tidak boleh negatif")
+
+    if distance > 500:
         return "OUT_OF_RANGE"
-    elif distance_cm >= 300:
+    elif distance >= 300:
         return "AMAN"
-    elif distance_cm >= 100:
+    elif distance >= danger_threshold:
         return "WASPADA"
     else:
         return "BAHAYA"

@@ -1,10 +1,9 @@
-# Petunjuk Menjalankan Aplikasi (How To Run) - Sensor Belakang Truk MVP
-
-## Prasyarat System
+## Prasyarat Sistem
 - Python 3.10+
 - Pytest (`pip install pytest`)
 
 ## Cara Menjalankan Aplikasi Utama (Simulasi MVP)
-1. Buka terminal dan masuk ke folder project:
+1. Buka terminal VS Code.
+2. Pastikan direktori terminal berada di folder P6:
    ```cmd
-   cd untuk_tugas_P6
+   cd C:\Projects\sensor_truck\untuk_tugas_P6

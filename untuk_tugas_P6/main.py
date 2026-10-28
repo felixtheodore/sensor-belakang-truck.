@@ -18,28 +18,25 @@ def run_simulation():
         speed = 8.0
         danger_threshold = 150.0
 
-    # Sample simulasi jarak
-    sample_distances = [600, 350, 180, 40]
+    # Sampel jarak mencakup titik kritis 120 cm
+    sample_distances = [600, 350, 180, 120, 40]
     print("--- MENGUJI SIMULASI JARAK ---")
     for dist in sample_distances:
         try:
-            status = evaluate_distance(dist)
+            status = evaluate_distance(dist, danger_threshold)
             buzzer = get_buzzer_config(status)
             logger.log_status(dist, status)
             print(f"Jarak: {dist} cm | Status: {status} | Buzzer: {buzzer['pattern']} ({buzzer['freq_hz']} Hz)")
         except ValueError as e:
             print(f"Jarak: {dist} cm | Error: {e}")
 
-    # Pengujian Input Invalid (Uji Ketahanan Sistem)
     print("\n--- UJI PENANGANAN INPUT INVALID ---")
-    invalid_samples = [-10, "abc"]
-    for inv in invalid_samples:
+    for inv in [-10, "abc"]:
         try:
             evaluate_distance(inv)
         except ValueError:
             print(f"Input '{inv}' -> BERHASIL DITOLAK (Handled via Exception)")
 
-    # Laporan Akhir
     print("\n=== LAPORAN KESELAMATAN PERJALANAN ===")
     report = generate_trip_report(logger.logs)
     print(f"Total Kejadian : {report['total_events']}")
