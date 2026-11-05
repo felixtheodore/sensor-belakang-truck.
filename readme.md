@@ -1,6 +1,6 @@
 # Smart Rear-Truck Obstacle & Safety Monitoring System
 
-Sistem pemantauan jarak dan keselamatan objek belakang truk dengan penyesuaian ambang batas bahaya secara dinamis berdasarkan kecepatan mundur kendaraan.
+Sistem pemantauan jarak dan keselamatan objek belakang truk dengan penyesualian ambang batas bahaya secara dinamis berdasarkan kecepatan mundur kendaraan.
 
 ---
 
@@ -62,5 +62,41 @@ Panduan pengujian dari nol (*fresh clone*) untuk dosen / asisten laboratorium:
 
 ### Langkah 1: Clone Repositori
 ```bash
-git clone [https://github.com/felixtheodore/sensor-belakang-truck.git](https://github.com/felixtheodore/sensor-belakang-truck.git)
+git clone https://github.com/felixtheodore/sensor-belakang-truck.git
 cd sensor-belakang-truck
+```
+
+### Langkah 2: Instalasi Dependensi Pengujian
+```bash
+py -m pip install pytest bandit
+```
+
+### Langkah 3: Jalankan Automated Unit Testing (10 Passed 100%)
+```bash
+cd untuk_tugas_P6
+py -m pytest
+```
+
+### Langkah 4: Jalankan Aplikasi Utama (MVP)
+```bash
+py main.py
+```
+
+---
+
+## 📹 4. Tautan Video Demo & Dokumentasi Pendukung
+
+- 📹 **Link Video Demo Google Drive**: [Tonton Video Demo MVP (Google Drive)](https://drive.google.com/file/d/1McnlSCyoNakEchc0a6Rgw_n8VTADnFGz/view)
+- 📖 **Panduan Teknis & Akses Demo**: [`untuk_tugas_P6/HowToRun.md`](https://github.com/felixtheodore/sensor-belakang-truck./blob/master/untuk_tugas_P6/HowToRun.md)
+- 📋 **MVP Checklist Status**: [`untuk_tugas_P6/checklist_mvp.md`](https://github.com/felixtheodore/sensor-belakang-truck./blob/master/untuk_tugas_P6/checklist_mvp.md)
+
+---
+
+## 🛡️ 5. Contoh Log Aman, Error Handling, & Remediasi (P8 - Poin 03)
+
+| Kategori | Contoh Output / Log Terminal | Penyebab Utama | Tindakan Perbaikan (Remediation) |
+| :--- | :--- | :--- | :--- |
+| **Normal Log** | `[CONFIG] Kecepatan: 8.0 km/h \| Ambang Bahaya Dinamis: 150.0 cm` | - | Log aman, hanya menampilkan variabel fungsional tanpa informasi sensitif. |
+| **Input Invalid (String)** | `Input 'abc' -> BERHASIL DITOLAK (Handled via Exception)` | Pengguna memasukkan karakter non-angka saat input kecepatan/jarak. | Ditangkap oleh `try-except ValueError`, dialihkan ke kecepatan default `8.0 km/h` tanpa membuat aplikasi *crash*. |
+| **Input Invalid (Negatif)**| `Input '-10' -> BERHASIL DITOLAK (Handled via Exception)` | Nilai jarak bernilai < 0. | Divalidasi langsung oleh `distance_checker.py` dengan melempar `ValueError("Jarak tidak boleh negatif")`. |
+| **Data Log Kosong** | `Rating Driver : EXCELLENT (NO DATA)` | Sistem dipanggil membuat rekap laporan saat riwayat kejadian masih kosong. | `report_generator.py` menangani kondisi array kosong dan mengembalikan skor default 100 secara aman. |
