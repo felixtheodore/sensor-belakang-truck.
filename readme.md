@@ -1,104 +1,66 @@
-# Sensor Belakang Truk
+# Smart Rear-Truck Obstacle & Safety Monitoring System
 
-Alat pendeteksi kendaraan di belakang truk menggunakan sensor 
+Sistem pemantauan jarak dan keselamatan objek belakang truk dengan penyesuaian ambang batas bahaya secara dinamis berdasarkan kecepatan mundur kendaraan.
 
-## 📌 Deskripsi
+---
 
-Sensor Belakang Truk merupakan alat yang dibuat untuk membantu sopir truk 
-mengetahui keberadaan mobil atau motor di belakang truk saat mundur. 
-Alat ini menggunakan sensor ultrasonic HC-SR04 untuk mendeteksi objek 
-dan memberikan peringatan berupa buzzer serta LED indikator.
+## 👤 Informasi Mahasiswa & Proyek
+- **Nama:** Felix Theodore
+- **NIM:** 2510101010
+- **Mata Kuliah:** Rekayasa Perangkat Lunak (Pertemuan 8 - Final MVP)
+- **Repository:** `sensor-belakang-truck`
 
-Truk container merupakan kendaraan dengan titik buta (blind spot) terbesar 
-di bagian belakang. Oleh karena itu, alat ini dirancang untuk mengurangi 
-risiko kecelakaan saat truk mundur.
+---
 
-## 🎯 Tujuan
+## 📌 1. Gambaran Umum Proyek (P1 - P7)
 
-- Membantu sopir truk mengetahui keberadaan kendaraan di belakang saat mundur.
-- Memberikan peringatan dini berupa suara dan cahaya.
-- Mengurangi risiko kecelakaan akibat blind spot.
-- Meningkatkan keamanan berkendara truk.
+### Deskripsi Proyek
+Truk kontainer memiliki area *blind spot* terbesar di bagian belakang. Sistem ini dirancang untuk membantu pengemudi truk mendeteksi keberadaan kendaraan/objek di belakang saat mundur menggunakan sensor ultrasonik serta memberikan peringatan dini berupa indikator LED dan Buzzer.
 
-## 💡 Manfaat
+### Tujuan & Manfaat
+- **Sopir Truk:** Membantu mengetahui keberadaan kendaraan di area *blind spot* dan mengurangi risiko kecelakaan saat mundur.
+- **Pengguna Jalan:** Meningkatkan keselamatan kendaraan lain di sekitar area belakang truk.
 
-**Bagi Sopir Truk**
-- Mengetahui keberadaan kendaraan di belakang.
-- Mendapat peringatan saat akan mundur.
-- Mengurangi risiko kecelakaan lalulintas.
-  
-**Bagi Pengguna Jalan Lain**
-- Lebih aman berada di sekitar truk.
-- Mengurangi risiko tertabrak saat truk mundur.
-- membantu pengendara lebih waspada saat berkendara.
-## ⚙️ Komponen
+### Perangkat Hardware & Komponen
+| Komponen | Jumlah | Fungsi / Deskripsi |
+| :--- | :--- | :--- |
+| Arduino Uno R3 | 1 | Mikrokontroler utama |
+| Sensor Ultrasonic HC-SR04 | 1 | Mengukur jarak objek di belakang truk |
+| Buzzer Aktif | 1 | Alarm peringatan suara (*beep*) |
+| LED Merah, Kuning, Hijau | @1 | Indikator visual status keamanan |
+| Resistor 220Ω & Jumper | Secukupnya | Rangkaian pendukung |
 
-| Komponen | Jumlah |
-|----------|--------|
-| Arduino Uno R3 | 1 |
-| Sensor Ultrasonic HC-SR04 | 1 |
-| Buzzer aktif | 1 |
-| LED Merah | 1 |
-| LED Kuning | 1 |
-| LED Hijau | 1 |
-| Resistor 220Ω | 3 |
-| Kabel jumper | secukupnya |
-| Breadboard | 1 |
+### Aturan Bisnis MVP & Ambang Batas Dinamis
+- **Jarak > 500 cm**: `OUT_OF_RANGE`
+- **Jarak 300 - 500 cm**: `AMAN` (LED Hijau / Buzzer Silent)
+- **Kecepatan <= 5 km/h**: Ambang batas bahaya standar = `100 cm`
+- **Kecepatan > 5 km/h**: Ambang batas bahaya dinamis naik = `150 cm`
+- **Zona Peringatan**:
+  - `Jarak < Dynamic Danger Threshold` $\rightarrow$ **BAHAYA** (LED Merah / Fast Beep)
+  - `Dynamic Danger Threshold <= Jarak <= 300 cm` $\rightarrow$ **WASPADA** (LED Kuning / Slow Beep)
 
-## 🔄 Cara Kerja
+---
 
-1. Sensor HC-SR04 memancarkan gelombang ultrasonic ke belakang truk.
-2. Gelombang akan memantul jika mengenai objek (mobil/motor).
-3. Arduino menghitung jarak berdasarkan waktu pantulan gelombang.
-4. Alarm berbunyi sesuai tingkat bahaya.
+## 🔐 2. Hasil Uji Security & Catatan Perubahan (P8 - Poin 01)
 
-## 🚦 Tingkat Bahaya
+### Laporan Security Audit (Bandit Static Analyzer)
+Pengujian keamanan berbasis *Static Application Security Testing* (SAST) telah dijalankan menggunakan **Bandit**:
+- **High Severity**: 0
+- **Medium Severity**: 0
+- **Low Severity**: 23 (Terbatas pada pemakaian `assert` di modul unit test `pytest`, **0 vulnerability** pada kode produksi).
 
-| Jarak | Status | LED | Buzzer |
-|-------|--------|-----|--------|
-| > 300 cm | Aman | Hijau | Mati |
-| 100 - 300 cm | Waspada | Kuning | Pelan |
-| < 100 cm | Bahaya | Merah | Kencang |
+### Catatan Keamanan Kode (Security Fixes):
+1. **Validasi Type & Range**: Fungsi `evaluate_distance()` menolak string dan angka negatif via `ValueError` untuk mencegah *unhandled exception*.
+2. **Sanitasi Log**: Log sistem hanya mencatat nilai numerik (jarak/kecepatan) tanpa menyimpan *path* sistem internal atau data sensitif.
+3. **No Hardcoded Secrets**: Bebas dari penulisan *API Key*, token, atau *credential* di dalam berkas kode.
 
-## 🔌 Wiring
+---
 
-| Komponen | Pin Arduino |
-|----------|-------------|
-| HC-SR04 VCC | 5V |
-| HC-SR04 TRIG | 9 |
-| HC-SR04 ECHO | 10 |
-| HC-SR04 GND | GND |
-| Buzzer + | 8 |
-| LED Merah | 7 |
-| LED Kuning | 6 |
-| LED Hijau | 5 |
+## 🚀 3. Panduan Fresh Clone, Build, & Execution (P8 - Poin 02 & 04)
 
-## 📁 Struktur File
+Panduan pengujian dari nol (*fresh clone*) untuk dosen / asisten laboratorium:
 
-- `sensor-truk.ino` — kode utama Arduino
-- `flowchart.png` — diagram alur logika
-- `images/` — foto komponen & dokumentasi
-
-## 🚀 Cara Menjalankan
-
-1. Buka Arduino IDE.
-2. Paste kode dari `sensor-truk.ino`.
-3. Sambungkan Arduino ke laptop menggunakan kabel USB.
-4. Pilih Board: **Arduino Uno**.
-5. Pilih Port: **COMx** (sesuai yang terdeteksi).
-6. Klik tombol **Upload**.
-
-## 📊 Status Project
-
-Status: 🚧 Dalam Pengembangan
-
-- [x] Desain logika & flowchart
-- [x] Kode program
-- [ ] Rakit hardware
-- [ ] Pengujian alat
-
-## 👤 Author
-
-**Nama:** [Felix Theodore]  
-**NIM:** [2510101010]  
-**Mata Kuliah:** [Rekayasa perangkat lunak]
+### Langkah 1: Clone Repositori
+```bash
+git clone [https://github.com/felixtheodore/sensor-belakang-truck.git](https://github.com/felixtheodore/sensor-belakang-truck.git)
+cd sensor-belakang-truck
