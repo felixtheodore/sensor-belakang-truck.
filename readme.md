@@ -62,7 +62,7 @@ Panduan pengujian dari nol (*fresh clone*) untuk dosen / asisten laboratorium:
 
 ### Langkah 1: Clone Repositori
 ```bash
-git clone https://github.com/felixtheodore/sensor-belakang-truck.git
+git clone https://github.com/felixtheodore/sensor-belakang-truck.
 cd sensor-belakang-truck
 ```
 
