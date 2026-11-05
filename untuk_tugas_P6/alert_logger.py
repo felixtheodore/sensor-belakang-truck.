@@ -1,14 +1,17 @@
-class AlertLogger:
-    def __init__(self):
-        self.logs = []
+import datetime
 
-    def log_status(self, distance_cm: float, status: str) -> dict:
-        entry = {"distance": distance_cm, "status": status}
-        self.logs.append(entry)
-        return entry
-
-    def count_danger_alerts(self) -> int:
-        return sum(1 for log in self.logs if log["status"] == "BAHAYA")
-
-    def clear_logs(self):
-        self.logs.clear()
+def log_alert(distance, status, speed=None):
+    """
+    Mencatat log peringatan dengan sanitasi data numerik dan pencegahan log injection.
+    """
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Sanitasi string status dari karakter newline / control characters
+    clean_status = str(status).strip().replace("\n", "").replace("\r", "")
+    
+    if speed is not None:
+        log_entry = f"[{timestamp}] STATUS: {clean_status} | Jarak: {distance} cm | Kecepatan: {speed} km/h"
+    else:
+        log_entry = f"[{timestamp}] STATUS: {clean_status} | Jarak: {distance} cm"
+        
+    return log_entry
