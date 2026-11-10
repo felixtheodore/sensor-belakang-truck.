@@ -3,10 +3,10 @@
 
 const int TRIG_PIN = 9;
 const int ECHO_PIN = 10;
-const int LED_MERAH = 2;
-const int LED_KUNING = 3;
-const int LED_HIJAU = 4;
-const int BUZZER = 5;
+const int LED_MERAH = 7;   // Selaras dengan ARCHITECTURE.md
+const int LED_KUNING = 6;  // Selaras dengan ARCHITECTURE.md
+const int LED_HIJAU = 5;   // Selaras dengan ARCHITECTURE.md
+const int BUZZER = 8;      // Selaras dengan ARCHITECTURE.md
 
 void setup() {
   pinMode(TRIG_PIN, OUTPUT);
@@ -27,9 +27,9 @@ long readDistance() {
   
   long duration = pulseIn(ECHO_PIN, HIGH, 30000); // Timeout 30ms (~500cm)
   if (duration == 0) {
-    return -1; // Sensor gagal membaca / timeout
+    return -1; // Sensor timeout / gagal baca
   }
-  return duration * 0.034 / 2; // Hitung jarak dalam cm
+  return duration * 0.034 / 2; // Konversi ke cm
 }
 
 void loop() {
@@ -41,30 +41,30 @@ void loop() {
 
   // Proteksi Fail-Safe & Penanganan Logika Jarak
   if (jarak <= 0) {
-    // SENSOR ERROR / TIMEOUT / GAGAL BACA -> FAIL-SAFE ke STATUS BAHAYA!
+    // SENSOR ERROR / TIMEOUT -> FAIL-SAFE KE STATUS BAHAYA!
     digitalWrite(LED_MERAH, HIGH);
     digitalWrite(LED_KUNING, LOW);
     digitalWrite(LED_HIJAU, LOW);
-    tone(BUZZER, 2000); // Beep Bahaya
+    tone(BUZZER, 2000);
   } else if (jarak < 100) {
     // ZONA BAHAYA (< 100 cm)
     digitalWrite(LED_MERAH, HIGH);
     digitalWrite(LED_KUNING, LOW);
     digitalWrite(LED_HIJAU, LOW);
-    tone(BUZZER, 2000); // Beep Cepat
+    tone(BUZZER, 2000);
   } else if (jarak < 300) {
     // ZONA WASPADA (100 cm - 299 cm)
     digitalWrite(LED_MERAH, LOW);
     digitalWrite(LED_KUNING, HIGH);
     digitalWrite(LED_HIJAU, LOW);
-    tone(BUZZER, 1000); // Beep Lambat
+    tone(BUZZER, 1000);
   } else {
     // ZONA AMAN (>= 300 cm)
     digitalWrite(LED_MERAH, LOW);
     digitalWrite(LED_KUNING, LOW);
     digitalWrite(LED_HIJAU, HIGH);
-    noTone(BUZZER); // Buzzer Matikan
+    noTone(BUZZER);
   }
 
-  delay(200); // Pause antar pengukuran
+  delay(150); // Delay 150 ms selaras dengan spesifikasi arsitektur
 }
