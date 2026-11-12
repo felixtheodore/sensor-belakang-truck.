@@ -103,3 +103,10 @@ py main.py
 | **Input Invalid (String/NaN)** | `Input 'abc' -> BERHASIL DITOLAK (Handled via Exception)` | Pengguna memasukkan karakter non-angka, boolean, atau NaN saat input. | Ditangkap oleh `try-except ValueError`, dialihkan ke kecepatan default `8.0 km/h` tanpa membuat aplikasi *crash*. |
 | **Input Invalid (Negatif)**| `Input '-10' -> BERHASIL DITOLAK (Handled via Exception)` | Nilai jarak bernilai < 0. | Divalidasi langsung oleh `distance_checker.py` dengan melempar `ValueError("Jarak tidak boleh negatif")`. |
 | **Data Log Kosong** | `Rating Driver : EXCELLENT (NO DATA)` | Sistem dipanggil membuat rekap laporan saat riwayat kejadian masih kosong. | `report_generator.py` menangani kondisi array kosong dan mengembalikan skor default 100 secara aman. |
+
+## Live Deployment
+Aplikasi web dapat diakses secara publik melalui tautan berikut:
+- **Live URL:** https://felixtheodore.pythonanywhere.com/
+
+## Screenshot Aplikasi
+*(hasil drag & drop gambar screenshot lu di sini)*
