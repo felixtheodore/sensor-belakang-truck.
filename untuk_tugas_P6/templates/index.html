@@ -18,15 +18,17 @@
         <div class="col-md-5">
             <div class="card shadow-sm p-3">
                 <h5 class="card-title mb-3">Input Simulasi</h5>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Kecepatan Mundur (km/h):</label>
-                    <input type="number" id="speed" class="form-control" value="8" step="0.1">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Jarak Objek Belakang (cm):</label>
-                    <input type="number" id="distance" class="form-control" value="120" step="1">
-                </div>
-                <button onclick="runSimulation()" class="btn btn-primary w-100 fw-bold">Jalankan Simulasi</button>
+                <form onsubmit="runSimulation(event)">
+                    <div class="mb-3">
+                        <label for="speed" class="form-label fw-bold">Kecepatan Mundur (km/h):</label>
+                        <input type="number" id="speed" class="form-control" value="8" min="0" max="120" step="0.1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="distance" class="form-label fw-bold">Jarak Objek Belakang (cm):</label>
+                        <input type="number" id="distance" class="form-control" value="120" min="0" max="10000" step="1" required>
+                    </div>
+                    <button type="submit" id="simBtn" class="btn btn-primary w-100 fw-bold">Jalankan Simulasi</button>
+                </form>
             </div>
         </div>
 
@@ -46,7 +48,7 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Skor Keamanan Driver:</span>
-                        <strong id="scoreVal">- / 100 (<span id="ratingVal">-</span>)</strong>
+                        <strong><span id="scoreVal">- / 100</span> (<span id="ratingVal">-</span>)</strong>
                     </li>
                 </ul>
             </div>
@@ -55,15 +57,24 @@
 
     <!-- Panel Log -->
     <div class="card shadow-sm p-3 mt-4">
-        <h5 class="card-title">Riwayat Log Kejadian</h5>
-        <pre id="logOutput" class="bg-dark text-success p-3 rounded" style="max-height: 250px; overflow-y: auto;">Belum ada simulasi dijalankan...</pre>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title mb-0">Riwayat Log Kejadian</h5>
+            <button type="button" id="clearLogBtn" onclick="clearLogs()" class="btn btn-outline-danger btn-sm">Reset Log</button>
+        </div>
+        <pre id="logOutput" class="bg-dark text-success p-3 rounded mb-0" style="max-height: 250px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;">{{ logs_text or 'Belum ada simulasi dijalankan...' }}</pre>
     </div>
 </div>
 
 <script>
-async function runSimulation() {
+async function runSimulation(event) {
+    if (event) event.preventDefault();
+
+    const simBtn = document.getElementById('simBtn');
     const speed = document.getElementById('speed').value;
     const distance = document.getElementById('distance').value;
+
+    simBtn.disabled = true;
+    simBtn.innerText = 'Memproses...';
 
     try {
         const res = await fetch('/api/simulate', {
@@ -73,14 +84,14 @@ async function runSimulation() {
         });
         const data = await res.json();
         
-        if(data.success) {
+        if (data.success) {
             const statusBox = document.getElementById('statusBox');
             statusBox.innerText = data.status;
             
             // Ubah warna box status sesuai level bahaya
-            if(data.status === 'BAHAYA') {
+            if (data.status === 'BAHAYA') {
                 statusBox.className = 'text-center py-2 mb-3 bg-danger text-white rounded h3 fw-bold';
-            } else if(data.status === 'WASPADA') {
+            } else if (data.status === 'WASPADA') {
                 statusBox.className = 'text-center py-2 mb-3 bg-warning text-dark rounded h3 fw-bold';
             } else {
                 statusBox.className = 'text-center py-2 mb-3 bg-success text-white rounded h3 fw-bold';
@@ -89,13 +100,42 @@ async function runSimulation() {
             document.getElementById('thresholdVal').innerText = data.threshold + ' cm';
             document.getElementById('buzzerVal').innerText = data.buzzer;
             document.getElementById('scoreVal').innerText = data.report.safety_score + ' / 100';
-            document.getElementById('ratingVal').innerText = data.report.driver_rating;
+            document.getElementById('ratingVal').innerText = data.report.rating || data.report.driver_rating || '-';
             
             const logsText = data.logs.map(l => l.formatted || JSON.stringify(l)).join('\n');
-            document.getElementById('logOutput').innerText = logsText;
+            document.getElementById('logOutput').innerText = logsText || 'Belum ada simulasi dijalankan...';
+        } else {
+            alert('Input tidak valid: ' + (data.error || 'Terjadi kesalahan'));
         }
-    } catch(err) {
-        alert('Gagal menjalankan simulasi: ' + err);
+    } catch (err) {
+        alert('Gagal terhubung ke server: ' + err.message);
+    } finally {
+        simBtn.disabled = false;
+        simBtn.innerText = 'Jalankan Simulasi';
+    }
+}
+
+async function clearLogs() {
+    const clearBtn = document.getElementById('clearLogBtn');
+    clearBtn.disabled = true;
+
+    try {
+        const res = await fetch('/api/logs/clear', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('logOutput').innerText = 'Belum ada simulasi dijalankan...';
+            const statusBox = document.getElementById('statusBox');
+            statusBox.innerText = '-';
+            statusBox.className = 'text-center py-2 mb-3 bg-secondary text-white rounded h3 fw-bold';
+            document.getElementById('thresholdVal').innerText = '- cm';
+            document.getElementById('buzzerVal').innerText = '-';
+            document.getElementById('scoreVal').innerText = '- / 100';
+            document.getElementById('ratingVal').innerText = '-';
+        }
+    } catch (err) {
+        alert('Gagal menghapus riwayat log: ' + err.message);
+    } finally {
+        clearBtn.disabled = false;
     }
 }
 </script>

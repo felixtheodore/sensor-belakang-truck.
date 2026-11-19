@@ -1,8 +1,27 @@
 import datetime
+import json
+import os
 
 class AlertLogger:
-    def __init__(self):
+    def __init__(self, log_file=None):
+        self.log_file = log_file
         self.logs = []
+        if self.log_file and os.path.exists(self.log_file):
+            try:
+                with open(self.log_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        self.logs = data
+            except (json.JSONDecodeError, OSError):
+                self.logs = []
+
+    def _save_logs(self):
+        if self.log_file:
+            log_dir = os.path.dirname(self.log_file)
+            if log_dir:
+                os.makedirs(log_dir, exist_ok=True)
+            with open(self.log_file, "w", encoding="utf-8") as f:
+                json.dump(self.logs, f, ensure_ascii=False, indent=2)
 
     def log_alert(self, distance, status, speed=None):
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -31,6 +50,7 @@ class AlertLogger:
         }
         
         self.logs.append(log_entry)
+        self._save_logs()
         return log_entry["formatted"]
 
     def log_status(self, distance, status, speed=None):
@@ -49,6 +69,7 @@ class AlertLogger:
 
     def clear_logs(self):
         self.logs.clear()
+        self._save_logs()
 
 
 def log_alert(distance, status, speed=None):
