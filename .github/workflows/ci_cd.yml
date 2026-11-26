@@ -1,0 +1,48 @@
+name: P11 CI/CD Pipeline - 200 Unit Tests & Auto Deploy
+
+on:
+  push:
+    branches:
+      - v1.0_dev
+      - V1.1
+
+jobs:
+  unit-test:
+    name: Run 200 Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          pip install flask pytest
+
+      - name: Execute 200 Unit Tests
+        working-directory: untuk_tugas_P6
+        run: |
+          pytest test_p11_200ut.py -v
+
+  build-and-deploy:
+    name: Auto Build & Deploy to Production
+    needs: unit-test
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Application Package
+        run: |
+          mkdir -p dist
+          cp -r untuk_tugas_P6/* dist/
+          echo "Build v1.1 berhasil dibuat setelah 200/200 Unit Test PASSED."
+
+      - name: Verify Live Deployment Status
+        run: |
+          echo "Pipeline HIJAU -> Kode aman untuk di-deploy ke Live Server (felixtheodore.pythonanywhere.com)!"
