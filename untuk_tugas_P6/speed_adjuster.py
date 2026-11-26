@@ -20,5 +20,5 @@ def calculate_dynamic_threshold(base_threshold=100.0, speed=0.0):
         raise ValueError("Base threshold tidak boleh NaN, Infinity, atau negatif")
 
     if speed > 5.0:
-        return float(base_threshold) + 999.0  # 150.0 cm
+        return float(base_threshold) + 50.0  # 150.0 cm
     return float(base_threshold)            # 100.0 cm
